@@ -1,29 +1,220 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Mi Planta de Café en VR/AR</title>
-    <!-- Solo A-Frame, sin extras opcionales -->
-    <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
-  </head>
-  <body>
-    <a-scene vr-mode-ui="enabled: true" background="color: #111122">
-      <a-camera position="0 1.6 5"></a-camera>
-      
-      <!-- Tu modelo -->
-      <a-entity 
-        gltf-model="url(result.glb)" 
-        position="0 1.2 -2" 
-        scale="2 2 2" 
-        rotation="0 45 0"
-        animation="property: rotation; to: 0 405 0; loop: true; dur: 10000; easing: linear">
-      </a-entity>
-      
-      <!-- Luces y decoración (todo igual) -->
-      <a-light type="ambient" color="#404060"></a-light>
-      <a-light type="directional" position="2 5 3" intensity="1.5"></a-light>
-      <a-plane position="0 0 -3" rotation="-90 0 0" width="8" height="8" color="#2A5A5A"></a-plane>
-      <a-sky color="#88AADD"></a-sky>
-    </a-scene>
-  </body>
+<head>
+  <meta charset="utf-8">
+  <title>Planta de Café VR - Meta Quest 3</title>
+  <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
+  <style>
+    body { margin: 0; background: #050b14; }
+    #vr-btn {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+      z-index: 999; background: transparent; border: 2px solid #00ff88;
+      color: #00ff88; font-family: monospace; font-size: 15px;
+      letter-spacing: 4px; padding: 12px 40px; border-radius: 6px;
+      cursor: pointer; box-shadow: 0 0 20px #00ff8855; transition: all .2s;
+    }
+    #vr-btn:hover { background: #00ff88; color: #000; }
+  </style>
+</head>
+<body>
+
+<button id="vr-btn" onclick="document.querySelector('a-scene').enterVR()">▶ ENTRAR EN VR</button>
+
+<a-scene
+  vr-mode-ui="enabled: false"
+  background="color: #0a0f1e"
+  renderer="antialias: true; colorManagement: true">
+
+  <a-assets>
+    <a-asset-item id="cafe-model" src="result.glb"></a-asset-item>
+  </a-assets>
+
+  <!-- Cámara -->
+  <a-entity id="rig">
+    <a-camera position="0 1.6 4.5" look-controls wasd-controls="enabled:true"></a-camera>
+  </a-entity>
+
+  <!-- ══ MODELO PRINCIPAL ══ -->
+  <a-entity
+    id="plant"
+    gltf-model="#cafe-model"
+    position="0 1.2 -2"
+    scale="2 2 2"
+    rotation="0 45 0"
+    animation__spin="property:rotation; to:0 405 0; loop:true; dur:10000; easing:linear">
+  </a-entity>
+
+  <!-- ══ PANEL GUÍA DE CONTROLES ══ -->
+  <!-- Fondo del panel -->
+  <a-plane position="0 3.3 -3.5" width="5.2" height="2.4" color="#030d1a" opacity="0.96"></a-plane>
+  <!-- Borde verde -->
+  <a-plane position="0 3.3 -3.51" width="5.28" height="2.48" color="#00ff88" opacity="0.08"></a-plane>
+
+  <!-- Título -->
+  <a-text value="CONTROLES META QUEST 3 — MOVER MODELO"
+    position="0 4.35 -3.49"
+    align="center" color="#00ff88"
+    width="5" wrap-count="50"
+    font="https://cdn.aframe.io/fonts/Exo2Bold.fnt">
+  </a-text>
+
+  <!-- Línea separadora simulada con un plano delgado -->
+  <a-plane position="0 4.1 -3.49" width="5.0" height="0.02" color="#00ff8844"></a-plane>
+
+  <!-- ── MANDO IZQUIERDO: dibujo SVG como imagen plana ── -->
+  <!-- Cuerpo del mando izq -->
+  <a-plane position="-2.0 3.2 -3.48" width="0.55" height="0.9" color="#0d1e30" opacity="1"></a-plane>
+  <a-plane position="-2.0 3.2 -3.47" width="0.57" height="0.92" color="#00aaff" opacity="0.12"></a-plane>
+
+  <!-- Grip izq -->
+  <a-plane position="-2.08 2.72 -3.48" width="0.22" height="0.38" color="#091525" opacity="1"></a-plane>
+
+  <!-- Botón X -->
+  <a-circle position="-1.82 3.3 -3.46" radius="0.10" color="#091828"></a-circle>
+  <a-circle position="-1.82 3.3 -3.455" radius="0.095" color="#00aaff" opacity="0.25"></a-circle>
+  <a-text value="X" position="-1.82 3.3 -3.45" align="center" color="#00aaff" width="0.6" wrap-count="2"></a-text>
+
+  <!-- Botón Y -->
+  <a-circle position="-1.82 3.55 -3.46" radius="0.10" color="#091828"></a-circle>
+  <a-circle position="-1.82 3.55 -3.455" radius="0.095" color="#ff4466" opacity="0.25"></a-circle>
+  <a-text value="Y" position="-1.82 3.55 -3.45" align="center" color="#ff4466" width="0.6" wrap-count="2"></a-text>
+
+  <!-- Joystick izq -->
+  <a-circle position="-2.1 3.1 -3.46" radius="0.12" color="#0a2535"></a-circle>
+  <a-circle position="-2.1 3.1 -3.455" radius="0.07" color="#00aaff" opacity="0.4"></a-circle>
+  <a-text value="↕" position="-2.1 3.1 -3.45" align="center" color="#00aaff" width="0.5" wrap-count="2"></a-text>
+
+  <!-- Trigger izq label -->
+  <a-plane position="-2.0 3.75 -3.46" width="0.42" height="0.14" color="#0f2235" opacity="1"></a-plane>
+  <a-text value="TRIG" position="-2.0 3.75 -3.45" align="center" color="#aabbcc" width="0.9" wrap-count="6"></a-text>
+
+  <!-- Label LEFT -->
+  <a-text value="LEFT" position="-2.0 2.5 -3.47" align="center" color="#1a3a55" width="0.9" wrap-count="5"></a-text>
+
+  <!-- ── INSTRUCCIONES IZQUIERDO ── -->
+  <a-text
+    value="[JOY]  Subir / Bajar modelo&#10;[Y]      Reset posicion&#10;[X]      Reducir tamano&#10;[TRIG]  Pausar rotacion&#10;[GRIP]  Agarrar modelo"
+    position="-1.15 3.25 -3.47"
+    align="left" color="#aabbcc"
+    width="2.2" wrap-count="28"
+    line-height="60">
+  </a-text>
+
+  <!-- Línea divisoria central -->
+  <a-plane position="0 3.2 -3.48" width="0.018" height="2.0" color="#00ff8833"></a-plane>
+
+  <!-- ── MANDO DERECHO: dibujo ── -->
+  <a-plane position="2.0 3.2 -3.48" width="0.55" height="0.9" color="#0d1e30" opacity="1"></a-plane>
+  <a-plane position="2.0 3.2 -3.47" width="0.57" height="0.92" color="#00ff88" opacity="0.12"></a-plane>
+
+  <!-- Grip der -->
+  <a-plane position="2.08 2.72 -3.48" width="0.22" height="0.38" color="#091525" opacity="1"></a-plane>
+
+  <!-- Botón A -->
+  <a-circle position="2.18 3.3 -3.46" radius="0.10" color="#091828"></a-circle>
+  <a-circle position="2.18 3.3 -3.455" radius="0.095" color="#00ff88" opacity="0.25"></a-circle>
+  <a-text value="A" position="2.18 3.3 -3.45" align="center" color="#00ff88" width="0.6" wrap-count="2"></a-text>
+
+  <!-- Botón B -->
+  <a-circle position="2.18 3.55 -3.46" radius="0.10" color="#091828"></a-circle>
+  <a-circle position="2.18 3.55 -3.455" radius="0.095" color="#ffcc00" opacity="0.25"></a-circle>
+  <a-text value="B" position="2.18 3.55 -3.45" align="center" color="#ffcc00" width="0.6" wrap-count="2"></a-text>
+
+  <!-- Joystick der -->
+  <a-circle position="2.1 3.1 -3.46" radius="0.12" color="#0a2535"></a-circle>
+  <a-circle position="2.1 3.1 -3.455" radius="0.07" color="#00ff88" opacity="0.4"></a-circle>
+  <a-text value="↔" position="2.1 3.1 -3.45" align="center" color="#00ff88" width="0.5" wrap-count="2"></a-text>
+
+  <!-- Trigger der -->
+  <a-plane position="2.0 3.75 -3.46" width="0.42" height="0.14" color="#0f2235" opacity="1"></a-plane>
+  <a-text value="TRIG" position="2.0 3.75 -3.45" align="center" color="#aabbcc" width="0.9" wrap-count="6"></a-text>
+
+  <!-- Label RIGHT -->
+  <a-text value="RIGHT" position="2.0 2.5 -3.47" align="center" color="#1a3d25" width="0.9" wrap-count="6"></a-text>
+
+  <!-- ── INSTRUCCIONES DERECHO ── -->
+  <a-text
+    value="[A]      Girar derecha&#10;[B]      Girar izquierda&#10;[TRIG]  Agrandar tamano&#10;[GRIP]  Agarrar modelo&#10;[JOY]  Mover adelante/atras"
+    position="1.18 3.25 -3.47"
+    align="left" color="#aabbcc"
+    width="2.2" wrap-count="28"
+    line-height="60">
+  </a-text>
+
+  <!-- ══ CONTROLADORES QUEST 3 ══ -->
+  <a-entity id="lh" oculus-touch-controls="hand:left"  laser-controls="hand:left"></a-entity>
+  <a-entity id="rh" oculus-touch-controls="hand:right" laser-controls="hand:right"></a-entity>
+
+  <!-- Luces -->
+  <a-light type="ambient"     color="#1a2535" intensity="1.5"></a-light>
+  <a-light type="directional" position="2 5 3" intensity="2" color="#aaddff"></a-light>
+  <a-light type="point"       position="0 3 -1.5" color="#00ff88" intensity="0.8" distance="6"></a-light>
+
+  <!-- Suelo y cielo -->
+  <a-plane position="0 0 -3" rotation="-90 0 0" width="10" height="10" color="#0a1a14"></a-plane>
+  <a-sky color="#060c18"></a-sky>
+
+</a-scene>
+
+<script>
+  const plant = document.getElementById('plant');
+  let spinning = true;
+  let p = {x:0, y:1.2, z:-2}, s = 2, ry = 45;
+
+  const applyP = () => plant.setAttribute('position', `${p.x.toFixed(2)} ${p.y.toFixed(2)} ${p.z.toFixed(2)}`);
+  const applyS = () => plant.setAttribute('scale', `${s} ${s} ${s}`);
+
+  function toggleSpin() {
+    spinning = !spinning;
+    plant.setAttribute('animation__spin', spinning
+      ? 'property:rotation;to:0 405 0;loop:true;dur:10000;easing:linear'
+      : 'property:rotation;to:0 0 0;dur:1;loop:false');
+  }
+
+  function resetModel() {
+    p={x:0,y:1.2,z:-2}; s=2; ry=45;
+    applyP(); applyS();
+    if(!spinning) toggleSpin();
+  }
+
+  // Teclado desktop
+  document.addEventListener('keydown', e => {
+    if(e.key==='ArrowUp')    { p.z-=0.12; applyP(); }
+    if(e.key==='ArrowDown')  { p.z+=0.12; applyP(); }
+    if(e.key==='ArrowLeft')  { p.x-=0.12; applyP(); }
+    if(e.key==='ArrowRight') { p.x+=0.12; applyP(); }
+    if(e.key==='+'||e.key==='=') { s=Math.min(s+0.2,7); applyS(); }
+    if(e.key==='-')              { s=Math.max(s-0.2,0.3); applyS(); }
+    if(e.key==='PageUp')         { p.y+=0.12; applyP(); }
+    if(e.key==='PageDown')       { p.y-=0.12; applyP(); }
+    if(e.key==='r'||e.key==='R') resetModel();
+    if(e.key===' ')              { e.preventDefault(); toggleSpin(); }
+  });
+
+  // Quest 3 — Mando derecho
+  const R = document.getElementById('rh');
+  R.addEventListener('abuttondown', ()=>{ ry+=30; if(!spinning) plant.setAttribute('rotation',`0 ${ry} 0`); });
+  R.addEventListener('bbuttondown', ()=>{ ry-=30; if(!spinning) plant.setAttribute('rotation',`0 ${ry} 0`); });
+  R.addEventListener('triggerdown', ()=>{ s=Math.min(s+0.25,7); applyS(); });
+  R.addEventListener('thumbstickmoved', e=>{
+    const{x,y}=e.detail;
+    if(Math.abs(x)>.3||Math.abs(y)>.3){ p.z+=y*-.05; p.x+=x*.05; applyP(); }
+  });
+
+  // Quest 3 — Mando izquierdo
+  const L = document.getElementById('lh');
+  L.addEventListener('xbuttondown', ()=>{ s=Math.max(s-0.25,0.3); applyS(); });
+  L.addEventListener('ybuttondown', ()=>{ resetModel(); });
+  L.addEventListener('triggerdown', ()=>{ toggleSpin(); });
+  L.addEventListener('thumbstickmoved', e=>{
+    const{x,y}=e.detail;
+    if(Math.abs(x)>.3||Math.abs(y)>.3){ p.y+=y*.05; p.x+=x*.05; applyP(); }
+  });
+
+  // VR eventos
+  const scene = document.querySelector('a-scene');
+  scene.addEventListener('enter-vr', ()=> document.getElementById('vr-btn').style.display='none');
+  scene.addEventListener('exit-vr',  ()=> document.getElementById('vr-btn').style.display='block');
+</script>
+</body>
 </html>
