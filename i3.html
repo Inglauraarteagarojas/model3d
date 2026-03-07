@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Mi Planta de Café en VR/AR</title>
+    <!-- Solo A-Frame, sin extras opcionales -->
+    <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
+  </head>
+  <body>
+    <a-scene vr-mode-ui="enabled: true" background="color: #111122">
+      <a-camera position="0 1.6 5"></a-camera>
+      
+      <!-- Tu modelo -->
+      <a-entity 
+        gltf-model="url(result.glb)" 
+        position="0 1.2 -2" 
+        scale="2 2 2" 
+        rotation="0 45 0"
+        animation="property: rotation; to: 0 405 0; loop: true; dur: 10000; easing: linear">
+      </a-entity>
+      
+      <!-- Luces y decoración (todo igual) -->
+      <a-light type="ambient" color="#404060"></a-light>
+      <a-light type="directional" position="2 5 3" intensity="1.5"></a-light>
+      <a-plane position="0 0 -3" rotation="-90 0 0" width="8" height="8" color="#2A5A5A"></a-plane>
+      <a-sky color="#88AADD"></a-sky>
+    </a-scene>
+  </body>
+</html>
